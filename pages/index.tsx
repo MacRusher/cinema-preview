@@ -55,8 +55,8 @@ const useStyles = createStyles(() => ({
 
 export default function Home() {
   const { classes } = useStyles();
-  const [cinema, setCinema] = useState<string>('1097');
-  const [date, setDate] = useState<Date>(() => new Date());
+  const [cinema, setCinema] = useState<string | null>('1097');
+  const [date, setDate] = useState<Date | null>(() => new Date());
   const [movieData, setMovieData] = useState<MovieData[]>([]);
   const [movieList, setMovieList] = useState<SelectItem[]>([]);
   const [movieId, setMovieId] = useState<string>('');

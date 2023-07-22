@@ -6,6 +6,7 @@
     "start": "next dev",
     "build": "next build",
     "prod": "next start",
+    "tsc": "tsc --noEmit -p .",
     "lint": "eslint pages",
     "fix": "npm run lint -- --fix"
   },
