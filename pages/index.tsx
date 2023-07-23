@@ -64,7 +64,10 @@ export default function Home() {
 
   useEffect(() => {
     console.log('effect', cinema, date);
-    fetch('/api/getMovies')
+    fetch('/api/getMovies', {
+      method: 'POST',
+      body: JSON.stringify({ cinema, date }),
+    })
       .then(res => res.json())
       .then((data: MovieData[]) => {
         console.log('data', data);
@@ -132,7 +135,7 @@ export default function Home() {
         {events?.map(event => (
           <Card key={event.id} shadow="sm" padding="xs" radius="md" withBorder>
             <Group position="left">
-              <Title order={5}>{dayjs(event.dateTime).format('hh:mm')}</Title>
+              <Title order={5}>{dayjs(event.dateTime).format('HH:mm')}</Title>
               {event.attributes
                 .filter(attr => !!attributeValues[attr])
                 .map(attr => (
@@ -140,6 +143,9 @@ export default function Home() {
                     {attributeValues[attr]}
                   </Badge>
                 ))}
+              <Badge variant="outline" size="xs" color="gray">
+                {event.auditorium}
+              </Badge>
             </Group>
 
             <Button variant="light" color="blue" mt="md" radius="md">

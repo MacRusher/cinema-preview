@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 type CCResponse = {
@@ -35,8 +36,19 @@ export default async function handler(
   >,
 ) {
   try {
+    const {
+      cinema = '1097',
+      date = new Date().toISOString(),
+    }: {
+      cinema?: string;
+      date?: string;
+    } = JSON.parse(req.body as string);
+    console.log('req', { cinema, date });
+
     const data = await fetch(
-      'https://www.cinema-city.pl/pl/data-api-service/v1/quickbook/10103/film-events/in-cinema/1097/at-date/2023-07-22?attr=&lang=pl_PL',
+      `https://www.cinema-city.pl/pl/data-api-service/v1/quickbook/10103/film-events/in-cinema/${cinema}/at-date/${dayjs(
+        date,
+      ).format('YYYY-MM-DD')}?attr=&lang=pl_PL`,
     ).then(res => res.json());
 
     const { films = [], events = [] } = data.body as CCResponse;
