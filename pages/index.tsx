@@ -1,18 +1,22 @@
 import {
+  Badge,
+  Button,
+  Card,
+  Center,
   Chip,
   Container,
   createStyles,
   Group,
   Header,
+  Image,
+  Loader,
   Select,
   SelectItem,
-  Title,
-  Card,
-  Badge,
   Stack,
-  Button,
+  Title,
 } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
+import { useSetState } from '@mantine/hooks';
 import dayjs from 'dayjs';
 import { useState, useEffect, useCallback } from 'react';
 
@@ -59,18 +63,19 @@ export default function Home() {
   const [date, setDate] = useState<Date | null>(() => new Date());
   const [movieData, setMovieData] = useState<MovieData[]>([]);
   const [movieList, setMovieList] = useState<SelectItem[]>([]);
-  const [movieId, setMovieId] = useState<string>('');
+  const [movieId, setMovieId] = useState<string | null>('');
   const [attributes, setAttributes] = useState(['subbed']);
+  const [previews, setPreviews] = useSetState<
+    Record<string, { preview?: string; loading: boolean }>
+  >({});
 
   useEffect(() => {
-    console.log('effect', cinema, date);
     fetch('/api/getMovies', {
       method: 'POST',
       body: JSON.stringify({ cinema, date }),
     })
       .then(res => res.json())
       .then((data: MovieData[]) => {
-        console.log('data', data);
         setMovieData(data);
         setMovieList(
           data.map(movie => ({
@@ -81,10 +86,18 @@ export default function Home() {
       });
   }, [cinema, date]);
 
-  const setMovie = useCallback((movieId: string) => {
-    console.log('setMovie', movieId);
-    setMovieId(movieId);
-  }, []);
+  const getPreview = (id: string, link: string) => {
+    setPreviews({ [id]: { loading: true } });
+
+    fetch('/api/getPreview', {
+      method: 'POST',
+      body: JSON.stringify({ link }),
+    })
+      .then(res => res.json())
+      .then(({ preview }) => {
+        setPreviews({ [id]: { preview, loading: false } });
+      });
+  };
 
   const movie = movieData.find(movie => movie.id === movieId);
 
@@ -112,7 +125,7 @@ export default function Home() {
 
         <Select
           value={movieId}
-          onChange={setMovie}
+          onChange={setMovieId}
           data={movieList}
           label="Wybierz film"
           searchable
@@ -129,12 +142,10 @@ export default function Home() {
         </Group>
       </Chip.Group>
 
-      {/* <pre>{JSON.stringify(events, null, 2)}</pre> */}
-
       <Stack justify="flex-start">
         {events?.map(event => (
           <Card key={event.id} shadow="sm" padding="xs" radius="md" withBorder>
-            <Group position="left">
+            <Group position="left" mb="md">
               <Title order={5}>{dayjs(event.dateTime).format('HH:mm')}</Title>
               {event.attributes
                 .filter(attr => !!attributeValues[attr])
@@ -148,9 +159,42 @@ export default function Home() {
               </Badge>
             </Group>
 
-            <Button variant="light" color="blue" mt="md" radius="md">
-              Sprawdź miejsca
-            </Button>
+            <Center>
+              {previews[event.id] ? (
+                previews[event.id].loading ? (
+                  <Loader size="xl" variant="bars" />
+                ) : (
+                  <Stack>
+                    <Image
+                      mx="auto"
+                      src={
+                        'data:image/png;base64, ' +
+                        (previews[event.id].preview ?? '')
+                      }
+                    />
+                    <Button
+                      variant="light"
+                      color="yellow"
+                      radius="md"
+                      component="a"
+                      target="_blank"
+                      href={event.link}
+                    >
+                      Kup bilet
+                    </Button>
+                  </Stack>
+                )
+              ) : (
+                <Button
+                  variant="light"
+                  color="blue"
+                  radius="md"
+                  onClick={() => getPreview(event.id, event.link)}
+                >
+                  Sprawdź miejsca
+                </Button>
+              )}
+            </Center>
           </Card>
         ))}
       </Stack>
