@@ -17,7 +17,7 @@ export default async function handler(
     const browser = await playwright.chromium.launch({
       args: chromium.args,
       executablePath: await chromium.executablePath(
-        'https://github.com/Sparticuz/chromium/releases/download/v114.0.0/chromium-v114.0.0-pack.tar',
+        'https://frankfurt-spaceapps.s3.eu-central-1.amazonaws.com/chromium-v114.0.0-pack.tar',
       ),
       headless: true,
     });
