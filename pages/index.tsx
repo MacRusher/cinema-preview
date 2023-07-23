@@ -18,7 +18,7 @@ import {
 import { DateInput } from '@mantine/dates';
 import { useSetState } from '@mantine/hooks';
 import dayjs from 'dayjs';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 
 type MovieData = {
   id: string;
