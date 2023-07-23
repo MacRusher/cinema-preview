@@ -1,16 +1,10 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import * as playwright from 'playwright-aws-lambda';
+const playwright = require('playwright-aws-lambda');
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<{ preview: string } | { message: string }>,
-) {
+exports.default = async (req, res) => {
   try {
     const {
       link = '',
-    }: {
-      link?: string;
-    } = JSON.parse(req.body as string);
+    } = JSON.parse(req.body);
     console.log('req', { link });
 
     const browser = await playwright.launchChromium();
@@ -34,6 +28,6 @@ export default async function handler(
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: (error as Error).message });
+    res.status(500).json({ message: error.message });
   }
 }
