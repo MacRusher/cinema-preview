@@ -1,4 +1,4 @@
-import chromium from 'chrome-aws-lambda';
+import chromium from '@sparticuz/chromium-min';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import playwright from 'playwright-core';
 
@@ -16,7 +16,9 @@ export default async function handler(
 
     const browser = await playwright.chromium.launch({
       args: chromium.args,
-      executablePath: (await chromium.executablePath) || undefined,
+      executablePath: await chromium.executablePath(
+        'https://github.com/Sparticuz/chromium/releases/download/v114.0.0/chromium-v114.0.0-pack.tar',
+      ),
       headless: true,
     });
 
