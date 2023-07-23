@@ -96,6 +96,9 @@ export default function Home() {
       .then(res => res.json())
       .then(({ preview }) => {
         setPreviews({ [id]: { preview, loading: false } });
+      })
+      .catch(() => {
+        setPreviews({ [id]: undefined });
       });
   };
 
