@@ -53,6 +53,8 @@ export default async function handler(
 
     const { films = [], events = [] } = data.body as CCResponse;
 
+    console.log('CCResponse', data.body);
+
     const movies = films.map(({ id, name, posterLink }) => ({
       id,
       name,
