@@ -24,6 +24,7 @@
     "@types/react-dom": "18.2.7",
     "dayjs": "1.11.9",
     "next": "13.4.12",
+    "playwright-aws-lambda": "0.10.0",
     "playwright-core": "1.36.1",
     "react": "18.2.0",
     "react-dom": "18.2.0"

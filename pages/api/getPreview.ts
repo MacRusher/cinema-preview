@@ -1,6 +1,5 @@
-import chromium from '@sparticuz/chromium-min';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import playwright from 'playwright-core';
+import * as playwright from 'playwright-aws-lambda';
 
 export default async function handler(
   req: NextApiRequest,
@@ -14,13 +13,7 @@ export default async function handler(
     } = JSON.parse(req.body as string);
     console.log('req', { link });
 
-    const browser = await playwright.chromium.launch({
-      args: chromium.args,
-      executablePath: await chromium.executablePath(
-        'https://frankfurt-spaceapps.s3.eu-central-1.amazonaws.com/chromium-v114.0.0-pack.tar',
-      ),
-      headless: true,
-    });
+    const browser = await playwright.launchChromium();
 
     try {
       const context = await browser.newContext();
