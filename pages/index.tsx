@@ -1,4 +1,5 @@
 import {
+  Alert,
   Badge,
   Button,
   Card,
@@ -17,6 +18,7 @@ import {
 } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import { useSetState } from '@mantine/hooks';
+import { IconMoodSad, IconTicket } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useState, useEffect } from 'react';
 
@@ -112,7 +114,9 @@ export default function Home() {
     <Container>
       <Header height={50} mb={10}>
         <Container className={classes.header}>
-          <Title order={3}>Cinema Seat Preview</Title>
+          <Title order={3}>
+            Cinema City Seat Finder <IconTicket />
+          </Title>
         </Container>
       </Header>
 
@@ -201,6 +205,19 @@ export default function Home() {
           </Card>
         ))}
       </Stack>
+
+      {events?.length === 0 && !!movie && (
+        <Alert
+          icon={<IconMoodSad size="1rem" />}
+          title="Chyba nic takiego nie grają w tym kinie…"
+          color="gray"
+          variant="outline"
+          mt={40}
+        >
+          Nie znależliśmy seansów spełniające podane kryteria. Zmień filtry albo
+          dzień w ustawieniach wyszukiwania.
+        </Alert>
+      )}
     </Container>
   );
 }

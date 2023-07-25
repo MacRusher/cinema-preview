@@ -1,13 +1,12 @@
-const playwright = require('playwright-aws-lambda');
+import { VercelRequest, VercelResponse } from '@vercel/node';
+import * as playwright from 'playwright-aws-lambda';
 
-exports.default = async (req, res) => {
+export default async (req: VercelRequest, res: VercelResponse) => {
   try {
-    const {
-      link = '',
-    } = JSON.parse(req.body);
+    const { link = '' }: { link: string } = JSON.parse(req.body as string);
     console.log('req', { link });
 
-    const browser = await playwright.launchChromium();
+    const browser = await playwright.launchChromium({ headless: true });
 
     try {
       const context = await browser.newContext();
@@ -28,6 +27,6 @@ exports.default = async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: (error as Error).message });
   }
-}
+};
