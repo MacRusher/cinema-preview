@@ -1,5 +1,6 @@
 import { MantineProvider } from '@mantine/core';
 import { DatesProvider } from '@mantine/dates';
+import { Analytics } from '@vercel/analytics/react';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import 'dayjs/locale/pl';
@@ -27,6 +28,7 @@ export default function App(props: AppProps) {
       >
         <DatesProvider settings={{ locale: 'pl' }}>
           <Component {...pageProps} />
+          <Analytics />
         </DatesProvider>
       </MantineProvider>
     </>
