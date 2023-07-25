@@ -1,4 +1,5 @@
 import {
+  ActionIcon,
   Alert,
   Badge,
   Button,
@@ -18,9 +19,14 @@ import {
 } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import { useSetState } from '@mantine/hooks';
-import { IconMoodSad, IconTicket } from '@tabler/icons-react';
+import {
+  IconMoodSad,
+  IconTicket,
+  IconChevronsLeft,
+  IconChevronsRight,
+} from '@tabler/icons-react';
 import dayjs from 'dayjs';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 type MovieData = {
   id: string;
@@ -50,6 +56,8 @@ const attributeValues: Record<string, string> = {
   vip: 'VIP',
 };
 
+const today = new Date();
+
 const useStyles = createStyles(() => ({
   header: {
     display: 'flex',
@@ -62,7 +70,7 @@ const useStyles = createStyles(() => ({
 export default function Home() {
   const { classes } = useStyles();
   const [cinema, setCinema] = useState<string | null>('1097');
-  const [date, setDate] = useState<Date | null>(() => new Date());
+  const [date, setDate] = useState<Date | null>(() => today);
   const [movieData, setMovieData] = useState<MovieData[]>([]);
   const [movieList, setMovieList] = useState<SelectItem[]>([]);
   const [movieId, setMovieId] = useState<string | null>('');
@@ -72,10 +80,11 @@ export default function Home() {
   >({});
 
   useEffect(() => {
-    fetch('/api/getMovies', {
-      method: 'POST',
-      body: JSON.stringify({ cinema, date }),
-    })
+    fetch(
+      `/api/getMovies?cinema=${cinema || ''}&date=${dayjs(date).format(
+        'YYYY-MM-DD',
+      )}`,
+    )
       .then(res => res.json())
       .then((data: MovieData[]) => {
         setMovieData(data);
@@ -88,21 +97,35 @@ export default function Home() {
       });
   }, [cinema, date]);
 
-  const getPreview = (id: string, link: string) => {
-    setPreviews({ [id]: { loading: true } });
+  const getPreview = useCallback(
+    (id: string, link: string) => {
+      setPreviews({ [id]: { loading: true } });
 
-    fetch('/api/getPreview', {
-      method: 'POST',
-      body: JSON.stringify({ link }),
-    })
-      .then(res => res.json())
-      .then(({ preview }) => {
-        setPreviews({ [id]: { preview, loading: false } });
+      fetch('/api/getPreview', {
+        method: 'POST',
+        body: JSON.stringify({ link }),
       })
-      .catch(() => {
-        setPreviews({ [id]: undefined });
-      });
-  };
+        .then(res => res.json())
+        .then(({ preview }) => {
+          setPreviews({ [id]: { preview, loading: false } });
+        })
+        .catch(() => {
+          setPreviews({ [id]: undefined });
+        });
+    },
+    [setPreviews],
+  );
+
+  const changeDay = useCallback(
+    (add = 1) => {
+      const newDate = dayjs(date).add(add, 'day');
+      if (newDate.isBefore(today, 'day')) {
+        return;
+      }
+      setDate(newDate.toDate());
+    },
+    [date],
+  );
 
   const movie = movieData.find(movie => movie.id === movieId);
 
@@ -128,7 +151,23 @@ export default function Home() {
           label="Wybierz kino"
         />
 
-        <DateInput value={date} onChange={setDate} label="Wybierz dzień" />
+        <Group position="center" spacing="sm" align="end" noWrap>
+          <ActionIcon variant="subtle" mb={5} onClick={() => changeDay(-1)}>
+            <IconChevronsLeft />
+          </ActionIcon>
+
+          <DateInput
+            value={date}
+            onChange={setDate}
+            label="Wybierz dzień"
+            valueFormat="DD MMMM (dddd)"
+            minDate={today}
+          />
+
+          <ActionIcon variant="subtle" mb={5} onClick={() => changeDay(1)}>
+            <IconChevronsRight />
+          </ActionIcon>
+        </Group>
 
         <Select
           value={movieId}
