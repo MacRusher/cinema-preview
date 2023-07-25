@@ -5,7 +5,9 @@
   "scripts": {
     "start": "next dev",
     "build": "next build",
+    "vercel": "vercel dev",
     "prod": "next start",
+    "test": "npm run lint && npm run tsc",
     "tsc": "tsc --noEmit -p .",
     "lint": "eslint pages",
     "fix": "npm run lint -- --fix"

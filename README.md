@@ -1,17 +1,36 @@
 # Cinema City Seat Finder
 
-### Dependencies:
+### Installation
+
+Dependencies:
 
 - node@18
 - npm@8
 
+```bash
+npm ci
+```
 
 ### Local development
 
+Proper way:
+
 ```bash
-npm ci
 npm start
 ```
+
+Alternative way (to test the vercel function directly):
+
+
+```bash
+npm run vercel
+```
+
+Note: in this approach the nextjs app and vercel functions will work, but the serverless functions in nextjs app will not!
+
+### Testing
+
+Run `npm run test` to check for linting and type errors.
 
 ### Deployment
 
